@@ -5,7 +5,7 @@ const UrlCard = ({ url, onDelete, onDetails, onShare, onEdit }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const fullUrl = `http://localhost:5000/${url.shortCode}`;
+    const fullUrl = `https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`;
     navigator.clipboard.writeText(fullUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
@@ -49,7 +49,7 @@ const UrlCard = ({ url, onDelete, onDetails, onShare, onEdit }) => {
 
       <div className="url-card-body">
         <a
-          href={`http://localhost:5000/${url.shortCode}`}
+          href={`https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`}
           target="_blank"
           rel="noopener noreferrer"
           className="url-card-short"

@@ -5,7 +5,7 @@ const UrlTable = ({ urls, onDelete, onDetails, onShare, onEdit }) => {
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopy = (id, shortCode) => {
-    const fullShortUrl = `http://localhost:5000/${shortCode}`;
+    const fullShortUrl = `https://snaplink-backend-7s7p.onrender.com/${shortCode}`;
     navigator.clipboard.writeText(fullShortUrl).then(() => {
       setCopiedId(id);
       setTimeout(() => {
@@ -102,7 +102,7 @@ const UrlTable = ({ urls, onDelete, onDetails, onShare, onEdit }) => {
                   <td className="short-url-cell">
                     <div className="short-url-wrapper">
                       <a
-                        href={`http://localhost:5000/${url.shortCode}`}
+                        href={`https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="short-link-href"
@@ -110,7 +110,7 @@ const UrlTable = ({ urls, onDelete, onDetails, onShare, onEdit }) => {
                         snap.lk/{url.shortCode}
                       </a>
                       <a
-                        href={`http://localhost:5000/${url.shortCode}`}
+                        href={`https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="redirect-link-icon-btn"
@@ -300,7 +300,7 @@ const UrlTable = ({ urls, onDelete, onDetails, onShare, onEdit }) => {
               <div className="mobile-url-card-links">
                 <div className="mobile-url-card-short-row">
                   <a
-                    href={`http://localhost:5000/${url.shortCode}`}
+                    href={`https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mobile-short-link"
@@ -308,7 +308,7 @@ const UrlTable = ({ urls, onDelete, onDetails, onShare, onEdit }) => {
                     snap.lk/{url.shortCode}
                   </a>
                   <a
-                    href={`http://localhost:5000/${url.shortCode}`}
+                    href={`https://snaplink-backend-7s7p.onrender.com/${url.shortCode}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="redirect-link-icon-btn"

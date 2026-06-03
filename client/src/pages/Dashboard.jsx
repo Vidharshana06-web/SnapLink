@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (selectedUrl) {
-      const fullLink = `http://localhost:5000/${selectedUrl.shortCode}`;
+      const fullLink = `https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`;
       QRCode.toDataURL(fullLink, {
         width: 300,
         margin: 2,
@@ -93,10 +93,10 @@ const Dashboard = () => {
         await navigator.share({
           files: [file],
           title: "SnapLink QR Code",
-          text: `Check out this link: http://localhost:5000/${selectedUrl.shortCode}`,
+          text: `Check out this link: https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`,
         });
       } else {
-        navigator.clipboard.writeText(`http://localhost:5000/${selectedUrl.shortCode}`);
+        navigator.clipboard.writeText(`https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`);
         alert("Link copied to clipboard! Share it with your friends.");
       }
     } catch (error) {
@@ -333,7 +333,7 @@ const Dashboard = () => {
 
   const copyModalLink = () => {
     if (!selectedUrl) return;
-    const fullLink = `http://localhost:5000/${selectedUrl.shortCode}`;
+    const fullLink = `https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`;
     navigator.clipboard.writeText(fullLink).then(() => {
       setCopiedModalLink(true);
       setTimeout(() => setCopiedModalLink(false), 1200);
@@ -341,7 +341,7 @@ const Dashboard = () => {
   };
 
   const copyBulkLink = (shortCode, id) => {
-    const fullLink = `http://localhost:5000/${shortCode}`;
+    const fullLink = `https://snaplink-backend-7s7p.onrender.com/${shortCode}`;
     navigator.clipboard.writeText(fullLink).then(() => {
       setCopiedBulkId(id);
       setTimeout(() => setCopiedBulkId(null), 1200);
@@ -721,7 +721,7 @@ const Dashboard = () => {
                   <span className="form-label" style={{ fontSize: "0.75rem" }}>Short Link</span>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
                     <a
-                      href={`http://localhost:5000/${selectedUrl.shortCode}`}
+                      href={`https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: "#818cf8", fontWeight: "600", fontSize: "1.1rem" }}
@@ -810,7 +810,7 @@ const Dashboard = () => {
                   type="text"
                   className="form-input"
                   readOnly
-                  value={`http://localhost:5000/${selectedUrl.shortCode}`}
+                  value={`https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`}
                   style={{ background: "rgba(0,0,0,0.3)" }}
                 />
                 <button onClick={copyModalLink} className="btn btn-primary">
@@ -821,7 +821,7 @@ const Dashboard = () => {
               <span className="form-label" style={{ fontSize: "0.75rem", marginBottom: "10px" }}>Share channels</span>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
                 <a
-                  href={`https://twitter.com/intent/tweet?url=http://localhost:5000/${selectedUrl.shortCode}&text=Check out this shortened link!`}
+                  href={`https://twitter.com/intent/tweet?url=https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}&text=Check out this shortened link!`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-secondary"
@@ -830,7 +830,7 @@ const Dashboard = () => {
                   🐦 Twitter
                 </a>
                 <a
-                  href={`https://api.whatsapp.com/send?text=http://localhost:5000/${selectedUrl.shortCode}`}
+                  href={`https://api.whatsapp.com/send?text=https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-secondary"
@@ -839,7 +839,7 @@ const Dashboard = () => {
                   💬 WhatsApp
                 </a>
                 <a
-                  href={`mailto:?subject=SnapLink Shared Link&body=Check out this link: http://localhost:5000/${selectedUrl.shortCode}`}
+                  href={`mailto:?subject=SnapLink Shared Link&body=Check out this link: https://snaplink-backend-7s7p.onrender.com/${selectedUrl.shortCode}`}
                   className="btn btn-secondary"
                   style={{ fontSize: "0.8rem", padding: "8px" }}
                 >

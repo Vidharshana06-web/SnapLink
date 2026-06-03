@@ -68,26 +68,7 @@ const DeviceActivity = () => {
     });
   };
 
-  // Icon mapping for browser
-  // const getBrowserIcon = (browserName) => {
-  //   switch (browserName) {
-  //     case "Chrome": return "🌐 Chrome";
-  //     case "Firefox": return "🦊 Firefox";
-  //     case "Safari": return "🧭 Safari";
-  //     case "Edge": return "🌐 Edge";
-  //     default: return "Unknown";
-  //   }
-  // };
-
-  // // Icon mapping for device type
-  // const getDeviceIcon = (deviceType) => {
-  //   switch (deviceType) {
-  //     case "Mobile": return "📱 Mobile";
-  //     case "Tablet": return "📟 Tablet";
-  //     case "Desktop": return "💻 Desktop";
-  //     default: return "🖥️ Unknown";
-  //   }
-  // };
+ 
 
 
 
@@ -240,7 +221,7 @@ const getDeviceIcon = (deviceType) => {
                         <tr key={log._id}>
                           <td style={{ fontWeight: "600", color: "#818cf8" }}>
                             <a
-                              href={`http://localhost:5000/${meta.shortCode}`}
+                              href={`https://snaplink-backend-7s7p.onrender.com/${meta.shortCode}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="short-link-href"

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://snaplink-backend-7s7p.onrender.com/api",
 });
 
 // Interceptor to inject JWT authorization token
