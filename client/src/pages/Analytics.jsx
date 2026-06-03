@@ -7,6 +7,8 @@ import "./Analytics.css";
 import {
   AreaChart,
   Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -30,6 +32,8 @@ const Analytics = () => {
     deviceBreakdown: [],
     dailyCounts: [],
   });
+  const [rawAnalytics, setRawAnalytics] = useState([]);
+  const [chartFilter, setChartFilter] = useState("Week");
   const [loading, setLoading] = useState(true);
 
   // Filters
@@ -60,12 +64,14 @@ const Analytics = () => {
         params.urlId = selectedUrlId;
       }
 
-      const [urlsRes, summaryRes] = await Promise.all([
+      const [urlsRes, summaryRes, rawRes] = await Promise.all([
         API.get("/url"),
         API.get("/analytics/summary", { params }),
+        API.get("/analytics"),
       ]);
       setUrls(urlsRes.data);
       setSummary(summaryRes.data);
+      setRawAnalytics(rawRes.data);
     } catch (error) {
       console.error("Error fetching analytics data:", error);
     } finally {
@@ -73,42 +79,307 @@ const Analytics = () => {
     }
   };
 
-  const getLineChartData = () => {
-    const countsMap = summary.dailyCounts.reduce((acc, item) => {
-      acc[item.date] = item.count;
-      return acc;
-    }, {});
+  // Filter logs by URL ID
+  const filteredLogs = selectedUrlId === "all"
+    ? rawAnalytics
+    : rawAnalytics.filter((log) => log.urlId === selectedUrlId);
 
-    if (selectedDays === 99) {
-      return summary.dailyCounts.map((item) => ({
-        label: new Date(item.date).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        }),
-        value: item.count,
-      }));
-    }
-
+  // Get logs filtered by local chart filter
+  const getLogsForChartFilter = () => {
     const now = new Date();
-    const dateKeys = [];
-
-    for (let i = Number(selectedDays) - 1; i >= 0; i -= 1) {
-      const date = new Date(now);
-      date.setHours(0, 0, 0, 0);
-      date.setDate(date.getDate() - i);
-      dateKeys.push(date.toISOString().split("T")[0]);
+    if (chartFilter === "Today") {
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return filteredLogs.filter((log) => {
+        const d = new Date(log.visitedAt || log.createdAt);
+        return d >= startOfToday && d <= endOfToday;
+      });
+    } else if (chartFilter === "Week") {
+      const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0, 0);
+      return filteredLogs.filter((log) => {
+        const d = new Date(log.visitedAt || log.createdAt);
+        return d >= cutoff;
+      });
+    } else if (chartFilter === "Month") {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      return filteredLogs.filter((log) => {
+        const d = new Date(log.visitedAt || log.createdAt);
+        return d >= startOfMonth && d <= endOfMonth;
+      });
+    } else if (chartFilter === "Year") {
+      const startOfYear = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+      const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+      return filteredLogs.filter((log) => {
+        const d = new Date(log.visitedAt || log.createdAt);
+        return d >= startOfYear && d <= endOfYear;
+      });
     }
-
-    return dateKeys.map((date) => ({
-      label: new Date(date).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
-      value: countsMap[date] || 0,
-    }));
+    // "All Time"
+    return filteredLogs;
   };
 
-  const lineChartData = getLineChartData();
+  const periodLogs = getLogsForChartFilter();
+
+  const getPeriodSummaryStats = () => {
+    const totalClicks = periodLogs.length;
+    const uniqueVisitors = new Set(
+      periodLogs.map((log) => `${log.browser}-${log.device}-${log.location}`)
+    ).size;
+    const mobileCount = periodLogs.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+    const desktopCount = periodLogs.filter((log) => log.device === "Desktop").length;
+
+    return {
+      totalClicks,
+      uniqueVisitors,
+      mobileCount,
+      desktopCount,
+    };
+  };
+
+  const periodStats = getPeriodSummaryStats();
+
+  const generateChartData = () => {
+    const now = new Date();
+
+    if (chartFilter === "Today") {
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const data = [];
+      for (let hour = 0; hour < 24; hour++) {
+        const bucketStart = new Date(startOfToday);
+        bucketStart.setHours(hour, 0, 0, 0);
+        const bucketEnd = new Date(startOfToday);
+        bucketEnd.setHours(hour, 59, 59, 999);
+
+        const logsInHour = periodLogs.filter((log) => {
+          const d = new Date(log.visitedAt || log.createdAt);
+          return d >= bucketStart && d <= bucketEnd;
+        });
+
+        const uniqueFingerprints = new Set(
+          logsInHour.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInHour.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInHour.filter((log) => log.device === "Desktop").length;
+
+        const ampm = hour >= 12 ? "PM" : "AM";
+        const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+        const label = `${displayHour} ${ampm}`;
+
+        data.push({
+          label,
+          "Total Clicks": logsInHour.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+      }
+      return data;
+    }
+
+    if (chartFilter === "Week") {
+      const data = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i, 0, 0, 0, 0);
+        const dayStart = new Date(date);
+        const dayEnd = new Date(date);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        const logsInDay = periodLogs.filter((log) => {
+          const d = new Date(log.visitedAt || log.createdAt);
+          return d >= dayStart && d <= dayEnd;
+        });
+
+        const uniqueFingerprints = new Set(
+          logsInDay.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInDay.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInDay.filter((log) => log.device === "Desktop").length;
+
+        const label = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        data.push({
+          label,
+          "Total Clicks": logsInDay.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+      }
+      return data;
+    }
+
+    if (chartFilter === "Month") {
+      const data = [];
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayStart = new Date(year, month, day, 0, 0, 0, 0);
+        const dayEnd = new Date(year, month, day, 23, 59, 59, 999);
+
+        const logsInDay = periodLogs.filter((log) => {
+          const d = new Date(log.visitedAt || log.createdAt);
+          return d >= dayStart && d <= dayEnd;
+        });
+
+        const uniqueFingerprints = new Set(
+          logsInDay.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInDay.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInDay.filter((log) => log.device === "Desktop").length;
+
+        const label = dayStart.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        data.push({
+          label,
+          "Total Clicks": logsInDay.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+      }
+      return data;
+    }
+
+    if (chartFilter === "Year") {
+      const data = [];
+      const year = now.getFullYear();
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      for (let month = 0; month < 12; month++) {
+        const monthStart = new Date(year, month, 1, 0, 0, 0, 0);
+        const monthEnd = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+        const logsInMonth = periodLogs.filter((log) => {
+          const d = new Date(log.visitedAt || log.createdAt);
+          return d >= monthStart && d <= monthEnd;
+        });
+
+        const uniqueFingerprints = new Set(
+          logsInMonth.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInMonth.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInMonth.filter((log) => log.device === "Desktop").length;
+
+        data.push({
+          label: monthNames[month],
+          "Total Clicks": logsInMonth.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+      }
+      return data;
+    }
+
+    // "All Time"
+    if (periodLogs.length === 0) return [];
+
+    // Sort logs by date ascending
+    const sortedLogs = [...periodLogs].sort((a, b) => {
+      return new Date(a.visitedAt || a.createdAt) - new Date(b.visitedAt || b.createdAt);
+    });
+
+    const firstDate = new Date(sortedLogs[0].visitedAt || sortedLogs[0].createdAt);
+    const lastDate = new Date(sortedLogs[sortedLogs.length - 1].visitedAt || sortedLogs[sortedLogs.length - 1].createdAt);
+
+    const diffTime = Math.abs(lastDate - firstDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 30) {
+      const data = [];
+      const dateMap = {};
+
+      sortedLogs.forEach((log) => {
+        const dateStr = new Date(log.visitedAt || log.createdAt).toISOString().split("T")[0];
+        if (!dateMap[dateStr]) dateMap[dateStr] = [];
+        dateMap[dateStr].push(log);
+      });
+
+      const tempDate = new Date(firstDate);
+      tempDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(lastDate);
+      endDate.setHours(23, 59, 59, 999);
+
+      while (tempDate <= endDate) {
+        const dateStr = tempDate.toISOString().split("T")[0];
+        const logsInDay = dateMap[dateStr] || [];
+
+        const uniqueFingerprints = new Set(
+          logsInDay.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInDay.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInDay.filter((log) => log.device === "Desktop").length;
+
+        data.push({
+          label: tempDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          "Total Clicks": logsInDay.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
+      return data;
+    } else {
+      const data = [];
+      const monthMap = {};
+
+      sortedLogs.forEach((log) => {
+        const d = new Date(log.visitedAt || log.createdAt);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        if (!monthMap[key]) monthMap[key] = [];
+        monthMap[key].push(log);
+      });
+
+      const startYear = firstDate.getFullYear();
+      const startMonth = firstDate.getMonth();
+      const endYear = lastDate.getFullYear();
+      const endMonth = lastDate.getMonth();
+
+      let currentYear = startYear;
+      let currentMonth = startMonth;
+
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+        const key = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
+        const logsInMonth = monthMap[key] || [];
+
+        const uniqueFingerprints = new Set(
+          logsInMonth.map((log) => `${log.browser}-${log.device}-${log.location}`)
+        );
+        const mobileCount = logsInMonth.filter((log) => log.device === "Mobile" || log.device === "Tablet").length;
+        const desktopCount = logsInMonth.filter((log) => log.device === "Desktop").length;
+
+        data.push({
+          label: `${monthNames[currentMonth]} ${currentYear}`,
+          "Total Clicks": logsInMonth.length,
+          "Unique Visitors": uniqueFingerprints.size,
+          "Mobile Traffic": mobileCount,
+          "Desktop Traffic": desktopCount,
+        });
+
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+      }
+      return data;
+    }
+  };
+
+  const chartData = generateChartData();
 
   const browserCategories = [
     "Chrome",
@@ -153,56 +424,89 @@ const Analytics = () => {
 
   const topUrls = getTopUrls();
 
-  // Render Line/Area Chart using Recharts
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="chart-glass-tooltip">
+          <div className="tooltip-title">{label}</div>
+          <div className="tooltip-list">
+            {payload.map((entry, index) => (
+              <div key={index} className="tooltip-item">
+                <span className="tooltip-label">
+                  <span className="tooltip-dot" style={{ backgroundColor: entry.color }} />
+                  {entry.name}
+                </span>
+                <span className="tooltip-value">{entry.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Render Multi-Line Chart using Recharts
   const renderLineChart = () => {
     return (
-      <div style={{ width: "100%", height: 240 }}>
+      <div style={{ width: "100%", height: 320 }}>
         <ResponsiveContainer>
-          <AreaChart data={lineChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <defs>
-              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#4f46e5" />
-                <stop offset="50%" stopColor="#7c3aed" />
-                <stop offset="100%" stopColor="#06b6d4" />
-              </linearGradient>
-            </defs>
+          <LineChart data={chartData} margin={{ top: 15, right: 15, left: -20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
-            <XAxis 
-              dataKey="label" 
-              stroke="#6b7280" 
+            <XAxis
+              dataKey="label"
+              stroke="#8e9bb0"
               fontSize={10}
               tickLine={false}
               axisLine={false}
+              dy={10}
             />
-            <YAxis 
-              stroke="#6b7280" 
+            <YAxis
+              stroke="#8e9bb0"
               fontSize={10}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
+              dx={-5}
             />
-            <Tooltip 
-              contentStyle={{ 
-                background: "#0a0b10", 
-                border: "1px solid var(--border-glow)", 
-                borderRadius: "var(--radius-sm)",
-                color: "#fff",
-                fontSize: "0.85rem"
-              }} 
-            />
-            <Area 
-              type="monotone" 
-              dataKey="value" 
-              stroke="url(#lineGrad)" 
+            <Tooltip content={<CustomTooltip />} />
+            <Line
+              type="monotone"
+              dataKey="Total Clicks"
+              stroke="#FF4FD8"
               strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#areaGrad)" 
+              dot={{ r: 0 }}
+              activeDot={{ r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+              animationDuration={600}
             />
-          </AreaChart>
+            <Line
+              type="monotone"
+              dataKey="Unique Visitors"
+              stroke="#3B82F6"
+              strokeWidth={3}
+              dot={{ r: 0 }}
+              activeDot={{ r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+              animationDuration={600}
+            />
+            <Line
+              type="monotone"
+              dataKey="Mobile Traffic"
+              stroke="#F97316"
+              strokeWidth={3}
+              dot={{ r: 0 }}
+              activeDot={{ r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+              animationDuration={600}
+            />
+            <Line
+              type="monotone"
+              dataKey="Desktop Traffic"
+              stroke="#8B5CF6"
+              strokeWidth={3}
+              dot={{ r: 0 }}
+              activeDot={{ r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+              animationDuration={600}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     );
@@ -234,11 +538,11 @@ const Analytics = () => {
         <div style={{ width: "100%", height: 180, position: "relative" }}>
           <ResponsiveContainer>
             <PieChart>
-              <Tooltip 
+              <Tooltip
                 formatter={(value, name, props) => [`${value} visits (${props.payload.percentage}%)`, name]}
-                contentStyle={{ 
-                  background: "#0a0b10", 
-                  border: "1px solid var(--border-glow)", 
+                contentStyle={{
+                  background: "#0a0b10",
+                  border: "1px solid var(--border-glow)",
                   borderRadius: "var(--radius-sm)",
                   color: "#fff",
                   fontSize: "0.85rem"
@@ -258,8 +562,8 @@ const Analytics = () => {
                 {activeBrowsers.map((entry, index) => {
                   const color = browserColors[entry.name] || browserColors.Unknown;
                   return (
-                    <Cell 
-                      key={`cell-${index}`} 
+                    <Cell
+                      key={`cell-${index}`}
                       fill={color}
                       style={{ cursor: "pointer", outline: "none" }}
                       stroke={color}
@@ -323,15 +627,15 @@ const Analytics = () => {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" horizontal={false} />
             <XAxis type="number" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
             <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-            <Tooltip 
+            <Tooltip
               formatter={(value, name, props) => [`${value} visits (${props.payload.percentage}%)`]}
-              contentStyle={{ 
-                background: "#0a0b10", 
-                border: "1px solid var(--border-glow)", 
+              contentStyle={{
+                background: "#0a0b10",
+                border: "1px solid var(--border-glow)",
                 borderRadius: "var(--radius-sm)",
                 color: "#fff",
                 fontSize: "0.85rem"
-              }} 
+              }}
             />
             <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={16}>
               {activeDevices.map((entry, index) => (
@@ -422,12 +726,64 @@ const Analytics = () => {
             // Analytics visualization
             <div className="analytics-body fade-in">
               {/* Click trend line graph */}
-              <div className="analytics-card card chart-trend-card">
-                <div className="chart-header">
-                  <h3 className="chart-title">Link Click Traffic</h3>
-                  <span className="chart-subtitle">Unique click logs count over time</span>
+              <div className="analytics-card card chart-trend-card modern-glassmorphic-card">
+                <div className="chart-trend-header-row">
+                  <div className="chart-header">
+                    <h3 className="chart-title">Link Click Traffic</h3>
+                    <span className="chart-subtitle">Unique click logs count over time</span>
+                  </div>
+
+                  <div className="chart-filter-toggles">
+                    {["Today", "Week", "Month", "Year", "All Time"].map((filter) => (
+                      <button
+                        key={filter}
+                        onClick={() => setChartFilter(filter)}
+                        className={`chart-filter-btn ${chartFilter === filter ? "active" : ""}`}
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="chart-body">{renderLineChart()}</div>
+
+                {/* Dynamic Summary Cards */}
+                <div className="chart-summary-grid">
+                  <div className="chart-summary-card total-clicks">
+                    <span className="summary-card-label">Total Clicks</span>
+                    <span className="summary-card-value">{periodStats.totalClicks}</span>
+                  </div>
+                  <div className="chart-summary-card unique-visitors">
+                    <span className="summary-card-label">Unique Visitors</span>
+                    <span className="summary-card-value">{periodStats.uniqueVisitors}</span>
+                  </div>
+                  <div className="chart-summary-card mobile-traffic">
+                    <span className="summary-card-label">Mobile Users</span>
+                    <span className="summary-card-value">{periodStats.mobileCount}</span>
+                  </div>
+                  <div className="chart-summary-card desktop-traffic">
+                    <span className="summary-card-label">Desktop Users</span>
+                    <span className="summary-card-value">{periodStats.desktopCount}</span>
+                  </div>
+                </div>
+
+                <div className="chart-body">
+                  {renderLineChart()}
+
+                  {/* Modern Legend */}
+                  <div className="chart-custom-legend">
+                    {[
+                      { name: "Total Clicks", color: "#FF4FD8" },
+                      { name: "Unique Visitors", color: "#3B82F6" },
+                      { name: "Mobile Traffic", color: "#F97316" },
+                      { name: "Desktop Traffic", color: "#8B5CF6" },
+                    ].map((item, index) => (
+                      <div key={index} className="legend-item">
+                        <span className="legend-indicator-dot" style={{ backgroundColor: item.color }} />
+                        <span>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Bottom secondary breakdown charts grid */}
