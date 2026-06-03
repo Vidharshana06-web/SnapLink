@@ -1,0 +1,214 @@
+/* UrlTable Component Styling */
+
+.original-url-cell {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.original-url-cell a {
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.original-url-cell a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.short-url-cell {
+  white-space: nowrap;
+}
+
+.short-url-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.short-link-href {
+  color: #818cf8;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.short-link-href:hover {
+  color: #a5b4fc;
+}
+
+.copy-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.copy-btn:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--border-glow);
+  color: var(--text-light);
+}
+
+/* Click and Date tags */
+.clicks-badge {
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.date-span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Action Icon Buttons */
+.action-icon-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-view:hover {
+  background: var(--info-bg);
+  border-color: var(--info);
+  color: var(--info);
+  transform: translateY(-1px);
+}
+
+.btn-share:hover {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: #a855f7;
+  color: #c084fc;
+  transform: translateY(-1px);
+}
+
+.btn-delete:hover {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--error);
+  transform: translateY(-1px);
+}
+
+/* Mobile card styling details */
+.mobile-short-link {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #818cf8;
+}
+
+.mobile-url-card-short-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.mobile-copy-btn {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid var(--border-color);
+  color: var(--text-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mobile-copy-btn:active {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.mobile-action-text-btn {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color var(--transition-fast);
+}
+
+.mobile-action-text-btn:hover {
+  color: var(--text-light);
+}
+
+.btn-danger-text {
+  color: #ef4444;
+}
+
+.btn-danger-text:hover {
+  color: #f87171;
+}
+
+.mobile-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.url-title-tag {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(129, 140, 248, 0.12);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.status-badge.active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.status-badge.warning {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.status-badge.expired {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.mobile-url-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}

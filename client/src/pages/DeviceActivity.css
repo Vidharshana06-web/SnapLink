@@ -1,0 +1,62 @@
+/* Device Activity component styles */
+
+.activity-header-panel {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.activity-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.activity-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.device-tag, .browser-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+/* Responsive collapse for activity list */
+@media (max-width: 768px) {
+  .activity-table-wrapper {
+    display: none !important; /* Hide desktop table */
+  }
+  
+  .mobile-activity-cards {
+    display: flex !important; /* Show cards layout on mobile */
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .activity-filter-card {
+    padding: 12px !important;
+  }
+  
+  .activity-filter-card select {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+
+.browser-tag,
+.device-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.browser-tag svg,
+.device-tag svg {
+  font-size: 16px;
+}

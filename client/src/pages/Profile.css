@@ -1,0 +1,156 @@
+/* Profile Page Styling */
+
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 2.2fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .profile-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* User avatar card layout */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 24px;
+  background: rgba(13, 17, 30, 0.45);
+}
+
+.profile-card-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--btn-gradient);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+  margin-bottom: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-card-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.profile-card-email {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.profile-card-badge {
+  margin-bottom: 24px;
+}
+
+.profile-card-meta {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.meta-label {
+  color: var(--text-muted);
+}
+
+.meta-val {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Settings tab navigation panel styling */
+.settings-panel {
+  padding: 0;
+  overflow: hidden;
+  background: rgba(13, 17, 30, 0.45);
+}
+
+.settings-tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.01);
+  padding: 0 24px;
+}
+
+.settings-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.settings-tab-btn:hover {
+  color: var(--text-light);
+}
+
+.settings-tab-btn.active {
+  color: #818cf8;
+  border-bottom-color: #818cf8;
+}
+
+.settings-tab-body {
+  padding: 32px 40px;
+}
+
+@media (max-width: 640px) {
+  .settings-tab-body {
+    padding: 24px 20px;
+  }
+  .settings-tabs-nav {
+    padding: 0 12px;
+    justify-content: space-around;
+  }
+  .settings-tab-btn {
+    padding: 16px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.settings-section-title {
+  font-size: 1.15rem;
+  color: var(--text-light);
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.settings-section-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  text-align: left;
+}
