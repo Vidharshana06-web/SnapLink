@@ -13,29 +13,19 @@ Explanatory Video Link: https://youtu.be/bwpLbnafsgM
 *   **Secure Authentication & Session Management**:
     *   Full sign-up and login capabilities with encrypted passwords via `BcryptJS`.
     *   Secure stateless session tracking using JSON Web Tokens (`JWT`) injected via Axios interceptors.
-    *   Stunning, interactive authentication pages containing dynamic animated background floating glow blobs.
 *   **Dynamic URL Shortening & Customization**:
     *   Generate secure, unique short links instantly using `nanoid`.
     *   Supports custom short aliases (e.g. `snap.lk/custom-tag`) with database-level uniqueness collision protection.
-    *   Attach custom titles/labels for quick link identification.
-    *   Set custom expiration dates (`expiresAt`) to automatically disable links in the future.
 *   **Enterprise Bulk Shortener**:
     *   Shorten multiple links at once.
     *   Accepts raw multi-line URL pastes or drag-and-drop uploads of `.csv` or `.txt` files containing absolute URLs.
-    *   Generates a structured result table with quick one-click copies and shares for the entire batch.
 *   **Real-time Analytics Dashboard**:
     *   Real-time tracker for clicks, active links, and average clicks performance metrics.
     *   Automatic geolocation capture (resolves Country, Region, City, and Location using `geoip-lite`).
-    *   Automated user agent parsing for Device classification (Desktop, Mobile, Tablet) and Browser tracking (Chrome, Firefox, Safari, Edge, Opera, Brave).
     *   Interactive charts powered by `Recharts` for visualizing click trends over time.
-    *   Detailed visit logs detailing specific IP addresses, locations, and system configurations.
 *   **QR Code & Native Sharing**:
     *   Instantly generate and render customizable high-definition QR codes for every shortened URL.
     *   Download QR codes directly as `.png` files.
-    *   Supports mobile native sharing using `navigator.share()` or automated clipboard copies as fallbacks.
-*   **Active Expiry Redirection**:
-    *   Short links containing expiration parameters are validated on the backend.
-    *   Expired links automatically route users to a custom, beautifully styled `/expired` front-end page rather than throwing generic errors.
 
 ---
 
@@ -142,79 +132,6 @@ To help you understand the data schemas in action, here are sample JSON payloads
     }
     ```
 
-### 2. Bulk Shorten Links (`POST /api/url/bulk`)
-*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
-*   **Request Body**:
-    ```json
-    {
-      "urls": [
-        "https://google.com",
-        "https://github.com"
-      ]
-    }
-    ```
-*   **Response Output (`201 Created`)**:
-    ```json
-    {
-      "message": "2 URLs shortened successfully.",
-      "data": [
-        {
-          "userId": "665e8a719f9f8c62c8e31234",
-          "originalUrl": "https://google.com",
-          "shortCode": "hG9k2x",
-          "clickCount": 0,
-          "lastActivityAt": null,
-          "expiresAt": null,
-          "_id": "665e8c109f9f8c62c8e3901a",
-          "createdAt": "2026-06-04T02:19:15.456Z",
-          "updatedAt": "2026-06-04T02:19:15.456Z"
-        },
-        {
-          "userId": "665e8a719f9f8c62c8e31234",
-          "originalUrl": "https://github.com",
-          "shortCode": "yT7q1p",
-          "clickCount": 0,
-          "lastActivityAt": null,
-          "expiresAt": null,
-          "_id": "665e8c109f9f8c62c8e3901b",
-          "createdAt": "2026-06-04T02:19:15.480Z",
-          "updatedAt": "2026-06-04T02:19:15.480Z"
-        }
-      ]
-    }
-    ```
-
-### 3. Get Analytics Summary (`GET /api/analytics/summary`)
-*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
-*   **Query Parameters**: `urlId=all&days=30`
-*   **Response Output (`200 OK`)**:
-    ```json
-    {
-      "totalClicks": 142,
-      "browserBreakdown": [
-        { "name": "Chrome", "count": 87 },
-        { "name": "Safari", "count": 29 },
-        { "name": "Firefox", "count": 12 },
-        { "name": "Brave", "count": 8 },
-        { "name": "Edge", "count": 4 },
-        { "name": "Opera", "count": 2 },
-        { "name": "Other", "count": 0 }
-      ],
-      "deviceBreakdown": [
-        { "name": "Desktop", "count": 94 },
-        { "name": "Mobile", "count": 41 },
-        { "name": "Tablet", "count": 7 },
-        { "name": "Unknown", "count": 0 }
-      ],
-      "dailyCounts": [
-        { "date": "2026-06-01", "count": 25 },
-        { "date": "2026-06-02", "count": 42 },
-        { "date": "2026-06-03", "count": 38 },
-        { "date": "2026-06-04", "count": 37 }
-      ]
-    }
-    ```
-
 ---
 
 ## Assumptions Made
@@ -238,12 +155,6 @@ We prompted AI to construct standard RESTful route handlers for user authenticat
 ### 3. Frontend UI/UX & Component Design
 To design the premium visual aesthetic, we consulted AI on implementing responsive layout components using CSS variables. We implemented animated floating blobs (`InteractiveAuthBg.jsx`) for auth overlays, created modular tables (`UrlTable.jsx`), generated stats counters (`StatsCard.jsx`), and styled modals to download and share generated QR codes.
 
-### 4. Analytical Visualization Integration
-We utilized AI to integrate `Recharts` graphs into the dashboard workspace. AI-guided implementation helped us transform flat analytics logs from the database into distinct groupings for trend lines, browser percentages, and device types, adapting smoothly to dark mode layouts.
-
-### 5. Debugging & Performance Optimization
-Throughout testing, we leveraged AI tools to debug reactive intervals in the dashboard (ensuring list updates occur without UI stutter), resolve CSS overflow behaviors in mobile viewports, and handle date parsing parameters securely across timezone differences.
-
 
 ## Architecture Diagram
 
@@ -258,49 +169,49 @@ The diagram below illustrates the full-stack architecture of SnapLink — coveri
 
 > A visual walkthrough of all major pages and features in SnapLink.
 
-### 🔐 Login Page
+### Login Page
 The premium dark authentication screen with animated floating blob background, email/password form, and gradient Sign In button.
 
 ![Login Page](./output/images/login.png)
 
 ---
 
-### 🏠 Dashboard — Workspace
+###  Dashboard — Workspace
 The main workspace showing real-time stats cards (Total URLs, Total Clicks, Active Links, Avg. Clicks/Link), the Single Link Shortener with custom alias and expiry inputs.
 
 ![Dashboard Workspace](./output/images/dashboard.png)
 
 ---
 
-### 📋 Dashboard — Recent Shortened Links Table
+### Dashboard — Recent Shortened Links Table
 The links management table displaying original URLs, generated short codes (`snap.lk/...`), click counters, last activity timestamps, expiry dates, and action buttons (View, Edit, Share, Delete).
 
 ![Dashboard Links Table](./output/images/dashboard2.png)
 
 ---
 
-### 📈 Analytics — Link Click Traffic Chart
+###  Analytics — Link Click Traffic Chart
 The analytics page showing real-time click traffic over time with interactive Recharts line graph, filterable by Today / Week / Month / Year / All Time, along with Total Clicks, Unique Visitors, Mobile Users, and Desktop Users counters.
 
 ![Analytics Traffic Chart](./output/images/analytics.png)
 
 ---
 
-### 🍩 Analytics — Browser & Device Breakdown
+### Analytics — Browser & Device Breakdown
 Donut chart showing browser share (Chrome 73%, Edge 27%), horizontal bar chart for device type distribution (Desktop vs Mobile), and the Top Performing Short Links leaderboard ranked by click count.
 
 ![Analytics Breakdown](./output/images/analytics1.png)
 
 ---
 
-### 📡 Device Activity — Real-Time Click Stream
+###  Device Activity — Real-Time Click Stream
 The Device Activity page showing a live click stream table per short link — with Device Type, Browser, exact Time of Access, and resolved Geolocation (e.g. Chennai, TN, IN).
 
 ![Device Activity](./output/images/device.png)
 
 ---
 
-### ⚙️ Account Settings — Security
+###  Account Settings — Security
 The Profile Settings page with Security tab open, allowing the authenticated user to change their password with current password verification and confirmation fields.
 
 ![Account Settings](./output/images/accsetting.png)
@@ -308,6 +219,7 @@ The Profile Settings page with Security tab open, allowing the authenticated use
 ---
 ![Account Settings](./output/images/db.png)
 
+![Account Settings](./output/images/db1.png)
 
 
 This project is a part of a hackathon run by https://katomaran.com...
