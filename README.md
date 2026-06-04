@@ -2,24 +2,41 @@
 
 SnapLink is a high-performance, full-stack link management and analytics platform. Featuring a modern, premium dark SaaS design system, SnapLink offers secure user authentication, custom link creation, bulk url shortening, and real-time geolocation analytics.
 
+## Links 
 Live Deployment: https://snap-link-gilt.vercel.app/
+
 Explanatory Video Link: https://youtu.be/bwpLbnafsgM
----
+
 
 ## Key Features
 
-* Secure Authentication & Session Management:
-Sign-up and login with encrypted passwords using BcryptJS. JWT-based stateless authentication via Axios interceptors. Includes animated and interactive auth UI.
-Dynamic URL Shortening & Customization:
-Generate unique short links using nanoid. Supports custom aliases, titles, and expiration dates with database-level uniqueness validation.
-Bulk URL Shortener:
-Shorten multiple URLs via text input or .csv/.txt upload. Returns structured output with one-click copy and share support.
-Real-time Analytics Dashboard:
-Tracks clicks, active links, and performance metrics in real time. Includes geolocation (country, city), device/browser detection, and visual charts using Recharts.
-QR Code & Native Sharing:
-Generates downloadable QR codes for each link. Supports native sharing (navigator.share) and clipboard fallback options.
-Smart Expiry Handling:
-Automatically validates expired links and redirects users to a custom /expired page instead of showing errors.
+*   **Secure Authentication & Session Management**:
+    *   Full sign-up and login capabilities with encrypted passwords via `BcryptJS`.
+    *   Secure stateless session tracking using JSON Web Tokens (`JWT`) injected via Axios interceptors.
+    *   Stunning, interactive authentication pages containing dynamic animated background floating glow blobs.
+*   **Dynamic URL Shortening & Customization**:
+    *   Generate secure, unique short links instantly using `nanoid`.
+    *   Supports custom short aliases (e.g. `snap.lk/custom-tag`) with database-level uniqueness collision protection.
+    *   Attach custom titles/labels for quick link identification.
+    *   Set custom expiration dates (`expiresAt`) to automatically disable links in the future.
+*   **Enterprise Bulk Shortener**:
+    *   Shorten multiple links at once.
+    *   Accepts raw multi-line URL pastes or drag-and-drop uploads of `.csv` or `.txt` files containing absolute URLs.
+    *   Generates a structured result table with quick one-click copies and shares for the entire batch.
+*   **Real-time Analytics Dashboard**:
+    *   Real-time tracker for clicks, active links, and average clicks performance metrics.
+    *   Automatic geolocation capture (resolves Country, Region, City, and Location using `geoip-lite`).
+    *   Automated user agent parsing for Device classification (Desktop, Mobile, Tablet) and Browser tracking (Chrome, Firefox, Safari, Edge, Opera, Brave).
+    *   Interactive charts powered by `Recharts` for visualizing click trends over time.
+    *   Detailed visit logs detailing specific IP addresses, locations, and system configurations.
+*   **QR Code & Native Sharing**:
+    *   Instantly generate and render customizable high-definition QR codes for every shortened URL.
+    *   Download QR codes directly as `.png` files.
+    *   Supports mobile native sharing using `navigator.share()` or automated clipboard copies as fallbacks.
+*   **Active Expiry Redirection**:
+    *   Short links containing expiration parameters are validated on the backend.
+    *   Expired links automatically route users to a custom, beautifully styled `/expired` front-end page rather than throwing generic errors.
+
 ---
 
 ## Tech Stack
@@ -167,6 +184,37 @@ To help you understand the data schemas in action, here are sample JSON payloads
     }
     ```
 
+### 3. Get Analytics Summary (`GET /api/analytics/summary`)
+*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+*   **Query Parameters**: `urlId=all&days=30`
+*   **Response Output (`200 OK`)**:
+    ```json
+    {
+      "totalClicks": 142,
+      "browserBreakdown": [
+        { "name": "Chrome", "count": 87 },
+        { "name": "Safari", "count": 29 },
+        { "name": "Firefox", "count": 12 },
+        { "name": "Brave", "count": 8 },
+        { "name": "Edge", "count": 4 },
+        { "name": "Opera", "count": 2 },
+        { "name": "Other", "count": 0 }
+      ],
+      "deviceBreakdown": [
+        { "name": "Desktop", "count": 94 },
+        { "name": "Mobile", "count": 41 },
+        { "name": "Tablet", "count": 7 },
+        { "name": "Unknown", "count": 0 }
+      ],
+      "dailyCounts": [
+        { "date": "2026-06-01", "count": 25 },
+        { "date": "2026-06-02", "count": 42 },
+        { "date": "2026-06-03", "count": 38 },
+        { "date": "2026-06-04", "count": 37 }
+      ]
+    }
+    ```
+
 ---
 
 ## Assumptions Made
@@ -262,4 +310,4 @@ The Profile Settings page with Security tab open, allowing the authenticated use
 
 
 
-This project is a part of a hackathon run by https://katomaran.com
+This project is a part of a hackathon run by https://katomaran.com...
