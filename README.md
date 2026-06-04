@@ -6,58 +6,6 @@ Live Deployment: https://snap-link-gilt.vercel.app/
 
 ---
 
-
-> A visual walkthrough of all major pages and features in SnapLink.
-
-### 🔐 Login Page
-The premium dark authentication screen with animated floating blob background, email/password form, and gradient Sign In button.
-
-![Login Page](./output/images/login.png)
-
----
-
-### 🏠 Dashboard — Workspace
-The main workspace showing real-time stats cards (Total URLs, Total Clicks, Active Links, Avg. Clicks/Link), the Single Link Shortener with custom alias and expiry inputs.
-
-![Dashboard Workspace](./output/images/dashboard.png)
-
----
-
-### 📋 Dashboard — Recent Shortened Links Table
-The links management table displaying original URLs, generated short codes (`snap.lk/...`), click counters, last activity timestamps, expiry dates, and action buttons (View, Edit, Share, Delete).
-
-![Dashboard Links Table](./output/images/dashboard2.png)
-
----
-
-### 📈 Analytics — Link Click Traffic Chart
-The analytics page showing real-time click traffic over time with interactive Recharts line graph, filterable by Today / Week / Month / Year / All Time, along with Total Clicks, Unique Visitors, Mobile Users, and Desktop Users counters.
-
-![Analytics Traffic Chart](./output/images/analytics.png)
-
----
-
-### 🍩 Analytics — Browser & Device Breakdown
-Donut chart showing browser share (Chrome 73%, Edge 27%), horizontal bar chart for device type distribution (Desktop vs Mobile), and the Top Performing Short Links leaderboard ranked by click count.
-
-![Analytics Breakdown](./output/images/analytics1.png)
-
----
-
-### 📡 Device Activity — Real-Time Click Stream
-The Device Activity page showing a live click stream table per short link — with Device Type, Browser, exact Time of Access, and resolved Geolocation (e.g. Chennai, TN, IN).
-
-![Device Activity](./output/images/device.png)
-
----
-
-### ⚙️ Account Settings — Security
-The Profile Settings page with Security tab open, allowing the authenticated user to change their password with current password verification and confirmation fields.
-
-![Account Settings](./output/images/accsetting.png)
-
----
-
 ## Key Features
 
 *   **Secure Authentication & Session Management**:
