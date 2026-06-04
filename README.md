@@ -1,4 +1,4 @@
-# SnapLink - Premium URL Shortener & Analytics Platform
+# SnapLink - URL Shortener & Analytics Platform
 
 SnapLink is a high-performance, full-stack link management and analytics platform. Featuring a modern, premium dark SaaS design system, SnapLink offers secure user authentication, custom link creation, bulk url shortening, and real-time geolocation analytics.
 
@@ -6,25 +6,6 @@ Live Deployment: https://snap-link-gilt.vercel.app/
 
 ---
 
-## Architecture Diagram
-
-The diagram below illustrates the full-stack architecture of SnapLink — covering the Client Layer, API Gateway, Application Services, Tracking Utilities, MongoDB Storage, and the Redirection Traffic pipeline.
-
-![SnapLink Architecture Diagram](./output/images/architecture.png)
-
-> **Tier Overview**
-> | # | Layer | Technology |
-> |---|-------|-----------|
-> | 1 | Client Layer | React 19, Vite, Axios |
-> | 2 | API Gateway | Express Router, JWT Middleware |
-> | 3 | Application Services | Auth / URL / Analytics / Redirect Controllers |
-> | 4 | Tracking Utilities | geoip-lite, User-Agent Parser |
-> | 5 | Storage | MongoDB — Users, Urls, Analytics Collections |
-> | 6 | Redirect Traffic | Short link hit → GeoLog → 302 Redirect |
-
----
-
-## Screenshots
 
 > A visual walkthrough of all major pages and features in SnapLink.
 
@@ -312,3 +293,75 @@ We utilized AI to integrate `Recharts` graphs into the dashboard workspace. AI-g
 
 ### 5. Debugging & Performance Optimization
 Throughout testing, we leveraged AI tools to debug reactive intervals in the dashboard (ensuring list updates occur without UI stutter), resolve CSS overflow behaviors in mobile viewports, and handle date parsing parameters securely across timezone differences.
+
+
+## Architecture Diagram
+
+The diagram below illustrates the full-stack architecture of SnapLink — covering the Client Layer, API Gateway, Application Services, Tracking Utilities, MongoDB Storage, and the Redirection Traffic pipeline.
+
+![SnapLink Architecture Diagram](./output/images/architecture.png)
+
+> **Tier Overview**
+> | # | Layer | Technology |
+> |---|-------|-----------|
+> | 1 | Client Layer | React 19, Vite, Axios |
+> | 2 | API Gateway | Express Router, JWT Middleware |
+> | 3 | Application Services | Auth / URL / Analytics / Redirect Controllers |
+> | 4 | Tracking Utilities | geoip-lite, User-Agent Parser |
+> | 5 | Storage | MongoDB — Users, Urls, Analytics Collections |
+> | 6 | Redirect Traffic | Short link hit → GeoLog → 302 Redirect |
+
+---
+
+## Screenshots
+
+> A visual walkthrough of all major pages and features in SnapLink.
+
+### 🔐 Login Page
+The premium dark authentication screen with animated floating blob background, email/password form, and gradient Sign In button.
+
+![Login Page](./output/images/login.png)
+
+---
+
+### 🏠 Dashboard — Workspace
+The main workspace showing real-time stats cards (Total URLs, Total Clicks, Active Links, Avg. Clicks/Link), the Single Link Shortener with custom alias and expiry inputs.
+
+![Dashboard Workspace](./output/images/dashboard.png)
+
+---
+
+### 📋 Dashboard — Recent Shortened Links Table
+The links management table displaying original URLs, generated short codes (`snap.lk/...`), click counters, last activity timestamps, expiry dates, and action buttons (View, Edit, Share, Delete).
+
+![Dashboard Links Table](./output/images/dashboard2.png)
+
+---
+
+### 📈 Analytics — Link Click Traffic Chart
+The analytics page showing real-time click traffic over time with interactive Recharts line graph, filterable by Today / Week / Month / Year / All Time, along with Total Clicks, Unique Visitors, Mobile Users, and Desktop Users counters.
+
+![Analytics Traffic Chart](./output/images/analytics.png)
+
+---
+
+### 🍩 Analytics — Browser & Device Breakdown
+Donut chart showing browser share (Chrome 73%, Edge 27%), horizontal bar chart for device type distribution (Desktop vs Mobile), and the Top Performing Short Links leaderboard ranked by click count.
+
+![Analytics Breakdown](./output/images/analytics1.png)
+
+---
+
+### 📡 Device Activity — Real-Time Click Stream
+The Device Activity page showing a live click stream table per short link — with Device Type, Browser, exact Time of Access, and resolved Geolocation (e.g. Chennai, TN, IN).
+
+![Device Activity](./output/images/device.png)
+
+---
+
+### ⚙️ Account Settings — Security
+The Profile Settings page with Security tab open, allowing the authenticated user to change their password with current password verification and confirmation fields.
+
+![Account Settings](./output/images/accsetting.png)
+
+---
