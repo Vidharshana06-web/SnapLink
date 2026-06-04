@@ -2,8 +2,7 @@
 
 SnapLink is a high-performance, full-stack link management and analytics platform. Featuring a modern, premium dark SaaS design system, SnapLink offers secure user authentication, custom link creation, bulk url shortening, and real-time geolocation analytics.
 
-Live Backend API: [https://snaplink-backend-7s7p.onrender.com](https://snaplink-backend-7s7p.onrender.com)  
-Live Redirection URL: [https://snaplink-backend-7s7p.onrender.com/:shortCode](https://snaplink-backend-7s7p.onrender.com/:shortCode)
+Live Deployment: [https://snap-link-gilt.vercel.app/]
 
 ---
 
@@ -104,6 +103,115 @@ Live Redirection URL: [https://snaplink-backend-7s7p.onrender.com/:shortCode](ht
    npm run dev
    ```
 5. Open your browser and go to `http://localhost:5173`.
+
+---
+
+## Sample API Responses
+
+To help you understand the data schemas in action, here are sample JSON payloads returned by SnapLink's API endpoints:
+
+### 1. Create Short Link (`POST /api/url/create`)
+*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+*   **Request Body**:
+    ```json
+    {
+      "originalUrl": "https://github.com/google/gemini",
+      "customShortCode": "gemini-docs",
+      "title": "Google Gemini Documentation",
+      "expiresAt": "2026-12-31"
+    }
+    ```
+*   **Response Output (`201 Created`)**:
+    ```json
+    {
+      "message": "Short URL Created",
+      "data": {
+        "userId": "665e8a719f9f8c62c8e31234",
+        "originalUrl": "https://github.com/google/gemini",
+        "shortCode": "gemini-docs",
+        "title": "Google Gemini Documentation",
+        "expiresAt": "2026-12-31T00:00:00.000Z",
+        "clickCount": 0,
+        "lastActivityAt": null,
+        "_id": "665e8b429f9f8c62c8e35678",
+        "createdAt": "2026-06-04T02:18:10.123Z",
+        "updatedAt": "2026-06-04T02:18:10.123Z"
+      }
+    }
+    ```
+
+### 2. Bulk Shorten Links (`POST /api/url/bulk`)
+*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+*   **Request Body**:
+    ```json
+    {
+      "urls": [
+        "https://google.com",
+        "https://github.com"
+      ]
+    }
+    ```
+*   **Response Output (`201 Created`)**:
+    ```json
+    {
+      "message": "2 URLs shortened successfully.",
+      "data": [
+        {
+          "userId": "665e8a719f9f8c62c8e31234",
+          "originalUrl": "https://google.com",
+          "shortCode": "hG9k2x",
+          "clickCount": 0,
+          "lastActivityAt": null,
+          "expiresAt": null,
+          "_id": "665e8c109f9f8c62c8e3901a",
+          "createdAt": "2026-06-04T02:19:15.456Z",
+          "updatedAt": "2026-06-04T02:19:15.456Z"
+        },
+        {
+          "userId": "665e8a719f9f8c62c8e31234",
+          "originalUrl": "https://github.com",
+          "shortCode": "yT7q1p",
+          "clickCount": 0,
+          "lastActivityAt": null,
+          "expiresAt": null,
+          "_id": "665e8c109f9f8c62c8e3901b",
+          "createdAt": "2026-06-04T02:19:15.480Z",
+          "updatedAt": "2026-06-04T02:19:15.480Z"
+        }
+      ]
+    }
+    ```
+
+### 3. Get Analytics Summary (`GET /api/analytics/summary`)
+*   **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+*   **Query Parameters**: `urlId=all&days=30`
+*   **Response Output (`200 OK`)**:
+    ```json
+    {
+      "totalClicks": 142,
+      "browserBreakdown": [
+        { "name": "Chrome", "count": 87 },
+        { "name": "Safari", "count": 29 },
+        { "name": "Firefox", "count": 12 },
+        { "name": "Brave", "count": 8 },
+        { "name": "Edge", "count": 4 },
+        { "name": "Opera", "count": 2 },
+        { "name": "Other", "count": 0 }
+      ],
+      "deviceBreakdown": [
+        { "name": "Desktop", "count": 94 },
+        { "name": "Mobile", "count": 41 },
+        { "name": "Tablet", "count": 7 },
+        { "name": "Unknown", "count": 0 }
+      ],
+      "dailyCounts": [
+        { "date": "2026-06-01", "count": 25 },
+        { "date": "2026-06-02", "count": 42 },
+        { "date": "2026-06-03", "count": 38 },
+        { "date": "2026-06-04", "count": 37 }
+      ]
+    }
+    ```
 
 ---
 
