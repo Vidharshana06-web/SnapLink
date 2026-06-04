@@ -225,4 +225,4 @@ The Profile Settings page with Security tab open, allowing the authenticated use
 ![Account Settings](./output/images/db1.png)
 
 
-This project is a part of a hackathon run by https://katomaran.com...
+This project is a part of a hackathon run by https://katomaran.com
