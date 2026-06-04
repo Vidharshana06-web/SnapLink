@@ -217,7 +217,10 @@ The Profile Settings page with Security tab open, allowing the authenticated use
 ![Account Settings](./output/images/accsetting.png)
 
 ---
+### Collections
+
 ![Account Settings](./output/images/db.png)
+---
 
 ![Account Settings](./output/images/db1.png)
 
